@@ -1,0 +1,13 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro.md 
+parts:
+- caption: Getting Started
+  chapters:
+    - file: notebooks/querying.ipynb
+- caption: Data format conversion
+  chapters:
+    - file: notebooks/noaa_to_lipd.ipynb
+

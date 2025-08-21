@@ -1,0 +1,2397 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Querying data from the NOAA database &#8212; PyleoTUPS Tutorials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css?v=6644e6bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/querying';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Converting a NOAA dataset into the LiPD format" href="noaa_to_lipd.html" />
+    <link rel="prev" title="PyleoTUPS tutorials: Using PyleoTUPS in your scientific workflows" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyleotups_logo.png" class="logo__image only-light" alt="PyleoTUPS Tutorials - Home"/>
+    <img src="../_static/pyleotups_logo.png" class="logo__image only-dark pst-js-only" alt="PyleoTUPS Tutorials - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    PyleoTUPS tutorials: Using PyleoTUPS in your scientific workflows
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying data from the NOAA database</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data format conversion</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="noaa_to_lipd.html">Converting a NOAA dataset into the LiPD format</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/LinkedEarth/pyleotupsTutorials/main?urlpath=lab/tree/docs/notebooks/querying.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Binder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Binder logo" src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/LinkedEarth/pyleotupsTutorials" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/LinkedEarth/pyleotupsTutorials/issues/new?title=Issue%20on%20page%20%2Fnotebooks/querying.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/querying.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Querying data from the NOAA database</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authors">Authors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preamble">Preamble</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#goals">Goals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-time">Reading time</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-study-id">From a study ID</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geographical-query">Geographical Query</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div style="text-align: center">
+<img src="https://github.com/LinkedEarth/Logos/blob/master/PyleoTUPS/pyleotups_logo.png?raw=true" alt="PyleoTUPS logo" width="400">
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="querying-data-from-the-noaa-database">
+<h1>Querying data from the NOAA database<a class="headerlink" href="#querying-data-from-the-noaa-database" title="Link to this heading">#</a></h1>
+<section id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Link to this heading">#</a></h2>
+<p>Deborah Khider
+<a href="https://orcid.org/0000-0001-7501-8430" target="_blank" rel="noopener noreferrer">
+<img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID iD" style="vertical-align: text-bottom;"/>
+</a></p>
+</section>
+<section id="preamble">
+<h2>Preamble<a class="headerlink" href="#preamble" title="Link to this heading">#</a></h2>
+<p>This tutorial will get you familiar with searching the NOAA database for relevant datasets and search them for relevant information such as variables, data, geographical information.</p>
+<section id="goals">
+<h3>Goals<a class="headerlink" href="#goals" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Searching for a specific study and obtaining information such as location, publication, variable metadata and the associated data.</p></li>
+<li><p>Searching over a geographical area</p></li>
+</ul>
+</section>
+<section id="pre-requisites">
+<h3>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">#</a></h3>
+</section>
+<section id="reading-time">
+<h3>Reading time<a class="headerlink" href="#reading-time" title="Link to this heading">#</a></h3>
+<p>Let’s import our packages!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyleotups</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="from-a-study-id">
+<h2>From a study ID<a class="headerlink" href="#from-a-study-id" title="Link to this heading">#</a></h2>
+<p>This is the most basic search you can perform, using a NOAA ID to access a dataset. First, you need to create a <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> object that will store the information.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">=</span><span class="n">Dataset</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s do a simple search, knowing the NOAA study ID. For this example, let’s use the dataset from <a class="reference external" href="https://www.science.org/doi/10.1126/sciadv.abg3848">Clemens et al. (2021)</a>, which can be accessed through <a class="reference external" href="https://www.ncei.noaa.gov/access/paleo-search/study/33213">NOAA Paleo portal</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">search_studies</span><span class="p">(</span><span class="n">noaa_id</span><span class="o">=</span><span class="mi">33213</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Parsing NOAA studies: 100%|██████████| 1/1 [00:00&lt;00:00, 3355.44it/s]
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>XMLID</th>
+      <th>StudyName</th>
+      <th>DataType</th>
+      <th>EarliestYearBP</th>
+      <th>MostRecentYearBP</th>
+      <th>EarliestYearCE</th>
+      <th>MostRecentYearCE</th>
+      <th>StudyNotes</th>
+      <th>ScienceKeywords</th>
+      <th>Investigators</th>
+      <th>Publications</th>
+      <th>Sites</th>
+      <th>Funding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>33213</td>
+      <td>74834</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>1462580</td>
+      <td>280</td>
+      <td>-1460630</td>
+      <td>1670</td>
+      <td>Provided Keywords: Indian monsoon, South Asian...</td>
+      <td>None</td>
+      <td>Steven Clemens, Masanobu Yamamoto, Kaustubh Th...</td>
+      <td>[{'Author': 'Clemens, Steven; Yamamoto, Masano...</td>
+      <td>[[{'DataTableID': '45857', 'DataTableName': 'U...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">summary</span></code> method provides basic information about the dataset, such as the name of the study, the NOAA <a class="reference external" href="https://www.ncei.noaa.gov/products/paleoclimatology">DataType</a>, the time coverage and the associated publication. The function retuns a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_summary</span><span class="p">()</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>XMLID</th>
+      <th>StudyName</th>
+      <th>DataType</th>
+      <th>EarliestYearBP</th>
+      <th>MostRecentYearBP</th>
+      <th>EarliestYearCE</th>
+      <th>MostRecentYearCE</th>
+      <th>StudyNotes</th>
+      <th>ScienceKeywords</th>
+      <th>Investigators</th>
+      <th>Publications</th>
+      <th>Sites</th>
+      <th>Funding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>33213</td>
+      <td>74834</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>1462580</td>
+      <td>280</td>
+      <td>-1460630</td>
+      <td>1670</td>
+      <td>Provided Keywords: Indian monsoon, South Asian...</td>
+      <td>None</td>
+      <td>Kaustubh Thirumalai, Liviu Giosan, Julie Riche...</td>
+      <td>[{'Author': 'Clemens, Steven; Yamamoto, Masano...</td>
+      <td>[[{'DataTableID': '45857', 'DataTableName': 'U...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">PyleoTUPS</span></code> allows you to get metadata information that will be returned in separate dataframes. For instance, let’s look at the information about the publication associated with the dataset. This function also returns BibTeX entries along with the DataFrame.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bib</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_publications</span><span class="p">()</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Author</th>
+      <th>Title</th>
+      <th>Journal</th>
+      <th>Year</th>
+      <th>Volume</th>
+      <th>Number</th>
+      <th>Pages</th>
+      <th>Type</th>
+      <th>DOI</th>
+      <th>URL</th>
+      <th>CitationKey</th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Clemens, Steven; Yamamoto, Masanobu; Thirumala...</td>
+      <td>Remote and Local Drivers of Pleistocene South ...</td>
+      <td>Science Advances</td>
+      <td>2021</td>
+      <td>7</td>
+      <td>23</td>
+      <td>NaN</td>
+      <td>publication</td>
+      <td>10.1126/sciadv.abg3848</td>
+      <td>http://dx.doi.org/10.1126/sciadv.abg3848</td>
+      <td>M._Remote_2021_33213</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div style="border-left: 4px solid #1f77b4; background: #f0f8ff; padding: 0.5em 1em; border-radius: 4px;">
+  <strong>Note:</strong> You can set the `save` parameter to True if you want to save a copy of the BibTeX entries.
+</div><p>Similarly, you can return information about the location of the record:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_geo</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_geo</span><span class="p">()</span>
+<span class="n">df_geo</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>DataType</th>
+      <th>SiteID</th>
+      <th>SiteName</th>
+      <th>LocationName</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>MinElevation</th>
+      <th>MaxElevation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>33213</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>And the funding that supported the study:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_fund</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_funding</span><span class="p">()</span>
+<span class="n">df_fund</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+      <th>FundingAgency</th>
+      <th>FundingGrant</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+      <td>US National Science Foundation</td>
+      <td>OCE1634774</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+      <td>Japan Society for the Promotion of Science (JSPS)</td>
+      <td>JPMXS05R2900001</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+      <td>UK Natural Environment Research Council (NERC)</td>
+      <td>JPMXS05R2900001, 19H05595</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+      <td>United States Geological Survey (USGS)</td>
+      <td>NE/L002493/1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div style="border-left: 4px solid #1f77b4; background: #f0f8ff; padding: 0.5em 1em; border-radius: 4px;">
+  <strong>Note:</strong> As you may have noticed, each table has the NOAA study ID, this is useful when you are looking at multiple studies after performing a search for multiple datasets.
+</div>
+<p>Next, let’s have a look at the tables of data present in the dataset:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_tables</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_tables</span><span class="p">()</span>
+<span class="n">df_tables</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>DataTableID</th>
+      <th>DataTableName</th>
+      <th>TimeUnit</th>
+      <th>FileURL</th>
+      <th>Variables</th>
+      <th>FileDescription</th>
+      <th>TotalFilesAvailable</th>
+      <th>SiteID</th>
+      <th>SiteName</th>
+      <th>LocationName</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>MinElevation</th>
+      <th>MaxElevation</th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>45857</td>
+      <td>U1446 Benthic Isotopes Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Hole, Type, Section, Core, Section_Dept...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>45858</td>
+      <td>U1446 Planktic Isotopes Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Hole, Type, Section, Comment, Core, Sec...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>45859</td>
+      <td>U1446 TEX86H_SST Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Hole, Type, Section, Core, Section_Dept...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>45860</td>
+      <td>U1446 d18Osw Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Age, SL_Scaled, SL_Scaled_averaged, d18O_G_ru...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>45861</td>
+      <td>U1446 LeafWax CarbonIsotope Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Hole, Type, Section, Core, Section_Dept...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>45862</td>
+      <td>U1446 Mg/Ca Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Hole, Type, Analytical_Facility, Core, ...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>45863</td>
+      <td>U1446 Rb/Ca Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Hole, Type, Section, Core, Section_Dept...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>45864</td>
+      <td>U1446 Age Model Clemens2021</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>[Site, Comments, Sample_Depth, Age]</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>58697</td>
+      <td>IODP U1446</td>
+      <td>Ocean&gt;Indian Ocean</td>
+      <td>19.083</td>
+      <td>85.733</td>
+      <td>-1440</td>
+      <td>-1440</td>
+      <td>33213</td>
+      <td>Bay of Bengal, Northeast Indian Margin Stable ...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>The dataset contains 8 tables. To get the data, you need to pass the <code class="docutils literal notranslate"><span class="pre">DataTableID</span></code> or <code class="docutils literal notranslate"><span class="pre">FileURL</span></code> to the <code class="docutils literal notranslate"><span class="pre">get_data()</span></code> method. Let’s have a look at the TEX86 data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dfs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">dataTableIDs</span><span class="o">=</span><span class="s2">&quot;45859&quot;</span><span class="p">)</span>
+<span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Site</th>
+      <th>Hole</th>
+      <th>Core</th>
+      <th>Type</th>
+      <th>Section</th>
+      <th>Section_Depth</th>
+      <th>Sample_Depth</th>
+      <th>Age</th>
+      <th>TEX86H</th>
+      <th>SST</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>4.5</td>
+      <td>0.045</td>
+      <td>0.31</td>
+      <td>-0.1177</td>
+      <td>30.55</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>31.5</td>
+      <td>0.315</td>
+      <td>0.66</td>
+      <td>-0.1216</td>
+      <td>30.28</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>61.5</td>
+      <td>0.615</td>
+      <td>1.04</td>
+      <td>-0.1183</td>
+      <td>30.51</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>90.5</td>
+      <td>0.905</td>
+      <td>1.41</td>
+      <td>-0.1089</td>
+      <td>31.15</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>121.5</td>
+      <td>1.215</td>
+      <td>1.80</td>
+      <td>-0.1155</td>
+      <td>30.70</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div style="border-left: 4px solid #1f77b4; background: #f0f8ff; padding: 0.5em 1em; border-radius: 4px;">
+  <strong>Note:</strong> You can pass multiple tables IDs as a list. The function will always return a list of DataFrames (hence why we selected the first one in the code above.)
+</div><p>Some relevant metadata for each column is stored in the DataFrame attributes:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">attrs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;variables&#39;: [&#39;Site&#39;,
+  &#39;Hole&#39;,
+  &#39;Core&#39;,
+  &#39;Type&#39;,
+  &#39;Section&#39;,
+  &#39;Section_Depth&#39;,
+  &#39;Sample_Depth&#39;,
+  &#39;Age&#39;,
+  &#39;TEX86H&#39;,
+  &#39;SST&#39;],
+ &#39;NOAAStudyId&#39;: &#39;33213&#39;,
+ &#39;StudyName&#39;: &#39;Bay of Bengal, Northeast Indian Margin Stable Isotope, Biomarker and SST Reconstructions since the Mid-Pleistocene&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+<p>To get more information about the variables, you can use the <code class="docutils literal notranslate"><span class="pre">get_variables</span></code> function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_var</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_variables</span><span class="p">(</span><span class="n">dataTableIDs</span><span class="o">=</span><span class="s2">&quot;45859&quot;</span><span class="p">)</span>
+<span class="n">df_var</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>SiteID</th>
+      <th>FileURL</th>
+      <th>VariableName</th>
+      <th>cvDataType</th>
+      <th>cvWhat</th>
+      <th>cvMaterial</th>
+      <th>cvError</th>
+      <th>cvUnit</th>
+      <th>cvSeasonality</th>
+      <th>cvDetail</th>
+      <th>cvMethod</th>
+      <th>cvAdditionalInfo</th>
+      <th>cvFormat</th>
+      <th>cvShortName</th>
+    </tr>
+    <tr>
+      <th>DataTableID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Site</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>sampling metadata&gt;sample identification</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Site identification</td>
+      <td>Character</td>
+      <td>Site</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Hole</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>sampling metadata&gt;sample identification</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Hole drilled at  Site U1446</td>
+      <td>Character</td>
+      <td>Hole</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Type</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>sampling metadata&gt;sample identification</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>H (9 m hydraulic piston core)  F (4.5 m hydrau...</td>
+      <td>Character</td>
+      <td>Type</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Section</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>sampling metadata&gt;sample identification</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Section number ( 1 through 7 and core catcher ...</td>
+      <td>Character</td>
+      <td>Section</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Core</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>sampling metadata&gt;sample identification</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Core number</td>
+      <td>Numeric</td>
+      <td>Core</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Section_Depth</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>sampling metadata&gt;sample identification</td>
+      <td>None</td>
+      <td>None</td>
+      <td>length unit&gt;centimeter</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Mid-depth of sample within section</td>
+      <td>Numeric</td>
+      <td>Section_Depth</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Sample_Depth</td>
+      <td>CLIMATE RECONSTRUCTIONS|PALEOCEANOGRAPHY</td>
+      <td>depth variable&gt;depth</td>
+      <td>None</td>
+      <td>None</td>
+      <td>length unit&gt;meter</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Spliced  core composite depth below sea floor ...</td>
+      <td>Numeric</td>
+      <td>Sample_Depth</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>Age</td>
+      <td>CLIMATE RECONSTRUCTIONS|PALEOCEANOGRAPHY</td>
+      <td>age variable&gt;age</td>
+      <td>None</td>
+      <td>None</td>
+      <td>time unit&gt;age unit&gt;calendar kiloyear before pr...</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Numeric</td>
+      <td>Age</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>TEX86H</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>chemical composition&gt;compound&gt;organic compound...</td>
+      <td>None</td>
+      <td>None</td>
+      <td>dimensionless</td>
+      <td>None</td>
+      <td>None</td>
+      <td>laboratory method&gt;chromatography&gt;liquid chroma...</td>
+      <td>index of Schouten et al. 2002; extracted lipids</td>
+      <td>Numeric</td>
+      <td>TEX86H</td>
+    </tr>
+    <tr>
+      <th>45859</th>
+      <td>33213</td>
+      <td>58697</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/contr...</td>
+      <td>SST</td>
+      <td>CLIMATE RECONSTRUCTIONS|PALEOCEANOGRAPHY</td>
+      <td>earth system variable&gt;temperature variable&gt;tem...</td>
+      <td>reconstruction material&gt;organic compound index...</td>
+      <td>None</td>
+      <td>temperature unit&gt;degree Celsius</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>index of Kim et al. 2010</td>
+      <td>Numeric</td>
+      <td>SST</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Instead of the table ID, you can also pass the file URL to get the data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">file_urls</span><span class="o">=</span><span class="s2">&quot;https://www.ncei.noaa.gov/pub/data/paleo/contributions_by_author/clemens2021/clemens2021-u1446-mgca-noaa.txt&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">df1</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Site</th>
+      <th>Hole</th>
+      <th>Core</th>
+      <th>Type</th>
+      <th>Section</th>
+      <th>Section_Depth</th>
+      <th>Sample_Depth</th>
+      <th>Age</th>
+      <th>Mg/Ca</th>
+      <th>Analytical_Facility</th>
+      <th>Mg/Ca_SST</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>5</td>
+      <td>0.05</td>
+      <td>0.32</td>
+      <td>4.63</td>
+      <td>Rosenthal (Rutgers)</td>
+      <td>28.41</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>32</td>
+      <td>0.32</td>
+      <td>0.66</td>
+      <td>4.62</td>
+      <td>Rosenthal (Rutgers)</td>
+      <td>28.46</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>62</td>
+      <td>0.62</td>
+      <td>1.05</td>
+      <td>4.72</td>
+      <td>Rosenthal (Rutgers)</td>
+      <td>28.43</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>91</td>
+      <td>0.91</td>
+      <td>1.42</td>
+      <td>4.58</td>
+      <td>Rosenthal (Rutgers)</td>
+      <td>28.63</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>U1446</td>
+      <td>C</td>
+      <td>1</td>
+      <td>H</td>
+      <td>1</td>
+      <td>122</td>
+      <td>1.22</td>
+      <td>1.81</td>
+      <td>4.70</td>
+      <td>Rosenthal (Rutgers)</td>
+      <td>28.61</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>This shows you how you can retrieve information about a dataset from NOAA and get information about the dataset. However, in most cases, you may not know the NOAA ID. NOAA offers an API search across several query parameters such as geographical extent, datatype…</p>
+<p>Let’s have a look!</p>
+</section>
+<section id="geographical-query">
+<h2>Geographical Query<a class="headerlink" href="#geographical-query" title="Link to this heading">#</a></h2>
+<p>Let’s start with a simple geographical query. Let’s look for all the datasets within 5°S-5°N and 109-125°E, roughly corresponding to the Indo-Pacific Warm Pool.</p>
+<p>Let’s create another <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> object to store this new search:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds2</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Querying terms and their definitions are available through NOAA: <a class="reference external" href="https://www.ncei.noaa.gov/access/paleo-search/api">https://www.ncei.noaa.gov/access/paleo-search/api</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds2</span><span class="o">.</span><span class="n">search_studies</span><span class="p">(</span><span class="n">max_lat</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">min_lat</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_lon</span><span class="o">=</span><span class="mi">109</span><span class="p">,</span>
+                       <span class="n">min_lon</span><span class="o">=</span><span class="mi">125</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Parsing NOAA studies: 100%|██████████| 100/100 [00:00&lt;00:00, 21706.28it/s]
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>XMLID</th>
+      <th>StudyName</th>
+      <th>DataType</th>
+      <th>EarliestYearBP</th>
+      <th>MostRecentYearBP</th>
+      <th>EarliestYearCE</th>
+      <th>MostRecentYearCE</th>
+      <th>StudyNotes</th>
+      <th>ScienceKeywords</th>
+      <th>Investigators</th>
+      <th>Publications</th>
+      <th>Sites</th>
+      <th>Funding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>11194</td>
+      <td>9632</td>
+      <td>1,100 Year El Niño/Southern Oscillation (ENSO)...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>1050.0</td>
+      <td>-52.0</td>
+      <td>900.0</td>
+      <td>2002.0</td>
+      <td>An index of canonical ENSO variability for the...</td>
+      <td>[Atmospheric and Oceanic Circulation Patterns ...</td>
+      <td>Jinbao Li, Shang-Ping Xie, Edward Cook, Rosann...</td>
+      <td>[{'Author': 'Li, J., S.-P. Xie, E.R. Cook, G. ...</td>
+      <td>[[{'DataTableID': '19791', 'DataTableName': 'e...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>22031</td>
+      <td>20009</td>
+      <td>1200 Year Atlantic Multidecadal Variability an...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>1150.0</td>
+      <td>-60.0</td>
+      <td>800.0</td>
+      <td>2010.0</td>
+      <td>Summer (May-September) Atlantic Multidecadal V...</td>
+      <td>[Atmospheric and Oceanic Circulation Patterns ...</td>
+      <td>Jianglin Wang, Bao Yang, Fredrik Ljungqvist, J...</td>
+      <td>[{'Author': 'Jianglin Wang, Bao Yang, Fredrik ...</td>
+      <td>[[{'DataTableID': '33108', 'DataTableName': 'W...</td>
+      <td>[{'fundingAgency': 'Deutsche Forschungsgemeins...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>39047</td>
+      <td>80187</td>
+      <td>1500 Year Sedimentological and Geochemical Dat...</td>
+      <td>PALEOLIMNOLOGY</td>
+      <td>1200.0</td>
+      <td>-50.0</td>
+      <td>750.0</td>
+      <td>2000.0</td>
+      <td>Elevations of lakes: Tota = 3015m; Siscunsi = ...</td>
+      <td>[Precipitation Reconstruction]</td>
+      <td>Broxton Bird, Byron Steinman, Jaime Escobar, A...</td>
+      <td>[{'Author': 'Bird, B.W., B.A. Steinman, J. Esc...</td>
+      <td>[[{'DataTableID': '51864', 'DataTableName': 'M...</td>
+      <td>[{'fundingAgency': 'Indiana University', 'fund...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2614</td>
+      <td>1685</td>
+      <td>350 KYr Sea Level Reconstruction and Foraminif...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>361500.0</td>
+      <td>1000.0</td>
+      <td>-359550.0</td>
+      <td>950.0</td>
+      <td></td>
+      <td>[Sea Level Reconstruction]</td>
+      <td>David Lea, Pamela Martin, Dorothy Pak, Howard ...</td>
+      <td>[{'Author': 'Lea, D.W., P.A. Martin, D.K. Pak,...</td>
+      <td>[[{'DataTableID': '4301', 'DataTableName': 'TR...</td>
+      <td>[]</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>14632</td>
+      <td>12613</td>
+      <td>700 Year El Niño/Southern Oscillation (ENSO) N...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>649.0</td>
+      <td>-55.0</td>
+      <td>1301.0</td>
+      <td>2005.0</td>
+      <td>An index of canonical El Niño/Southern Oscilla...</td>
+      <td>[ENSO, Atmospheric and Oceanic Circulation Pat...</td>
+      <td>Jinbao Li, Shang-Ping Xie, Edward Cook, Marian...</td>
+      <td>[{'Author': 'Li, J., S.-P. Xie, E.R. Cook, G. ...</td>
+      <td>[[{'DataTableID': '24679', 'DataTableName': 'L...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>25611</td>
+      <td>23814</td>
+      <td>Eastern Equatorial Pacific d18O and d13C Data ...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>24734.0</td>
+      <td>0.0</td>
+      <td>-22784.0</td>
+      <td>1950.0</td>
+      <td>None</td>
+      <td>[Last Glacial Maximum]</td>
+      <td>Heather Ford, Celia McChesney, Jennifer Hertzb...</td>
+      <td>[{'Author': 'Ford, H.L., C.L. McChesney, J.E. ...</td>
+      <td>[[{'DataTableID': '37453', 'DataTableName': 'O...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>30152</td>
+      <td>71852</td>
+      <td>Eastern Pacific Ocean TEX86 and Mg/Ca SST Reco...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>24734.0</td>
+      <td>1239.0</td>
+      <td>-22784.0</td>
+      <td>711.0</td>
+      <td>Metadata are from the Temperature-12k project ...</td>
+      <td>None</td>
+      <td>Jennifer Hertzberg, Matthew Schmidt, Thomas Bi...</td>
+      <td>[{'Author': 'Kaufman, D., McKay, N., Routson, ...</td>
+      <td>[[{'DataTableID': '42637', 'DataTableName': 'M...</td>
+      <td>[]</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>2624</td>
+      <td>1695</td>
+      <td>Eastern Pacific Pleistocene Alkenone Data and ...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>1833700.0</td>
+      <td>4472.0</td>
+      <td>-1831750.0</td>
+      <td>-2522.0</td>
+      <td></td>
+      <td>[Sea Surface Temperature Reconstruction]</td>
+      <td>Zhonghui Liu, Timothy Herbert</td>
+      <td>[{'Author': 'Liu, Z. and T.D. Herbert', 'Title...</td>
+      <td>[[{'DataTableID': '4320', 'DataTableName': 'OD...</td>
+      <td>[]</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>19139</td>
+      <td>16805</td>
+      <td>Eastern Tropical Indian Ocean 45,000 Year d18O...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>45330.0</td>
+      <td>60.0</td>
+      <td>-43380.0</td>
+      <td>1890.0</td>
+      <td>High-resolution (~30-80 years) foraminiferal o...</td>
+      <td>[Sea Surface Temperature Reconstruction]</td>
+      <td>Mahyar Mohtadi, Matthias Prange, Delia Oppo, R...</td>
+      <td>[{'Author': 'Mahyar Mohtadi, Matthias Prange, ...</td>
+      <td>[[{'DataTableID': '29599', 'DataTableName': 'M...</td>
+      <td>[{'fundingAgency': 'Bundesministerium für Bild...</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>19874</td>
+      <td>17739</td>
+      <td>Eastern Tropical Pacific 1,000 Year Foraminfer...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>1088.0</td>
+      <td>-59.0</td>
+      <td>862.0</td>
+      <td>2009.0</td>
+      <td>Oxygen isotopes and Mg/Ca data from planktonic...</td>
+      <td>[Little Ice Age (LIA), Medieval Warm Period]</td>
+      <td>Athanasios Koutavas, Thomas Marchitto, Braddoc...</td>
+      <td>[{'Author': 'Gerald T. Rustic, Athanasios Kout...</td>
+      <td>[[{'DataTableID': '30534', 'DataTableName': 'R...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 14 columns</p>
+</div></div></div>
+</div>
+<div style="border-left: 4px solid #d62728; background: #ffe6e6; padding: 0.5em 1em; border-radius: 4px;">
+  <strong>Warning:</strong> One of the default parameters in `search_studies` is how many studies can be returned by query. The default is 100. 
+</div>
+<p>We got 100 datasets, which means we may have hit the limit. Let’s increase to 500 and see what happens:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds2</span><span class="o">.</span><span class="n">search_studies</span><span class="p">(</span><span class="n">max_lat</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">min_lat</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_lon</span><span class="o">=</span><span class="mi">109</span><span class="p">,</span>
+                       <span class="n">min_lon</span><span class="o">=</span><span class="mi">125</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Parsing NOAA studies: 100%|██████████| 383/383 [00:00&lt;00:00, 7918.97it/s]
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>XMLID</th>
+      <th>StudyName</th>
+      <th>DataType</th>
+      <th>EarliestYearBP</th>
+      <th>MostRecentYearBP</th>
+      <th>EarliestYearCE</th>
+      <th>MostRecentYearCE</th>
+      <th>StudyNotes</th>
+      <th>ScienceKeywords</th>
+      <th>Investigators</th>
+      <th>Publications</th>
+      <th>Sites</th>
+      <th>Funding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>11194</td>
+      <td>9632</td>
+      <td>1,100 Year El Niño/Southern Oscillation (ENSO)...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>1050.0</td>
+      <td>-52.0</td>
+      <td>900.0</td>
+      <td>2002.0</td>
+      <td>An index of canonical ENSO variability for the...</td>
+      <td>[Atmospheric and Oceanic Circulation Patterns ...</td>
+      <td>Jinbao Li, Shang-Ping Xie, Edward Cook, Rosann...</td>
+      <td>[{'Author': 'Li, J., S.-P. Xie, E.R. Cook, G. ...</td>
+      <td>[[{'DataTableID': '19791', 'DataTableName': 'e...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>22031</td>
+      <td>20009</td>
+      <td>1200 Year Atlantic Multidecadal Variability an...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>1150.0</td>
+      <td>-60.0</td>
+      <td>800.0</td>
+      <td>2010.0</td>
+      <td>Summer (May-September) Atlantic Multidecadal V...</td>
+      <td>[Atmospheric and Oceanic Circulation Patterns ...</td>
+      <td>Jianglin Wang, Bao Yang, Fredrik Ljungqvist, J...</td>
+      <td>[{'Author': 'Jianglin Wang, Bao Yang, Fredrik ...</td>
+      <td>[[{'DataTableID': '33108', 'DataTableName': 'W...</td>
+      <td>[{'fundingAgency': 'Deutsche Forschungsgemeins...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>39047</td>
+      <td>80187</td>
+      <td>1500 Year Sedimentological and Geochemical Dat...</td>
+      <td>PALEOLIMNOLOGY</td>
+      <td>1200.0</td>
+      <td>-50.0</td>
+      <td>750.0</td>
+      <td>2000.0</td>
+      <td>Elevations of lakes: Tota = 3015m; Siscunsi = ...</td>
+      <td>[Precipitation Reconstruction]</td>
+      <td>Broxton Bird, Byron Steinman, Jaime Escobar, A...</td>
+      <td>[{'Author': 'Bird, B.W., B.A. Steinman, J. Esc...</td>
+      <td>[[{'DataTableID': '51864', 'DataTableName': 'M...</td>
+      <td>[{'fundingAgency': 'Indiana University', 'fund...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2614</td>
+      <td>1685</td>
+      <td>350 KYr Sea Level Reconstruction and Foraminif...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>361500.0</td>
+      <td>1000.0</td>
+      <td>-359550.0</td>
+      <td>950.0</td>
+      <td></td>
+      <td>[Sea Level Reconstruction]</td>
+      <td>David Lea, Pamela Martin, Dorothy Pak, Howard ...</td>
+      <td>[{'Author': 'Lea, D.W., P.A. Martin, D.K. Pak,...</td>
+      <td>[[{'DataTableID': '4301', 'DataTableName': 'TR...</td>
+      <td>[]</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>14632</td>
+      <td>12613</td>
+      <td>700 Year El Niño/Southern Oscillation (ENSO) N...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>649.0</td>
+      <td>-55.0</td>
+      <td>1301.0</td>
+      <td>2005.0</td>
+      <td>An index of canonical El Niño/Southern Oscilla...</td>
+      <td>[ENSO, Atmospheric and Oceanic Circulation Pat...</td>
+      <td>Jinbao Li, Shang-Ping Xie, Edward Cook, Marian...</td>
+      <td>[{'Author': 'Li, J., S.-P. Xie, E.R. Cook, G. ...</td>
+      <td>[[{'DataTableID': '24679', 'DataTableName': 'L...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>378</th>
+      <td>6400</td>
+      <td>2421</td>
+      <td>Western Tropical Pacific, 21Kyr BP to present,...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>21921.0</td>
+      <td>2.0</td>
+      <td>-19971.0</td>
+      <td>1948.0</td>
+      <td>Foraminiferal stable isotope and Mg/Ca data fo...</td>
+      <td>None</td>
+      <td>Axel Timmermann, Lowell Stott, Robert Thunell</td>
+      <td>[{'Author': 'Stott, L.D., A. Timmermann, and R...</td>
+      <td>[[{'DataTableID': '9544', 'DataTableName': 'M2...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+    <tr>
+      <th>379</th>
+      <td>16791</td>
+      <td>14498</td>
+      <td>Western Ugandan Crater Lakes 1000Yr Diatom-inf...</td>
+      <td>PALEOLIMNOLOGY</td>
+      <td>878.0</td>
+      <td>-57.0</td>
+      <td>1072.0</td>
+      <td>2007.0</td>
+      <td>Diatom census data and reconstructed Lake Leve...</td>
+      <td>[hydrology]</td>
+      <td>Keely Mills, David Ryves</td>
+      <td>[{'Author': 'Keely Mills and David B. Ryves ',...</td>
+      <td>[[{'DataTableID': '26997', 'DataTableName': 'K...</td>
+      <td>[{'fundingAgency': 'UK Natural Environment Res...</td>
+    </tr>
+    <tr>
+      <th>380</th>
+      <td>8722</td>
+      <td>2801</td>
+      <td>Yasuhara et al. 2009 Equatorial Atlantic ODP92...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>500000.0</td>
+      <td>0.0</td>
+      <td>-498050.0</td>
+      <td>1950.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Moriaki Yasuhara, Gene Hunt, Thomas Cronin, Hi...</td>
+      <td>[{'Author': 'Yasuhara, M., G. Hunt, T.M. Croni...</td>
+      <td>[[{'DataTableID': '32695', 'DataTableName': 'Y...</td>
+      <td>[]</td>
+    </tr>
+    <tr>
+      <th>381</th>
+      <td>6266</td>
+      <td>2549</td>
+      <td>de Garidel-Thoron et al. 2005 Western Pacific ...</td>
+      <td>CLIMATE RECONSTRUCTIONS</td>
+      <td>1750000.0</td>
+      <td>0.0</td>
+      <td>-1748050.0</td>
+      <td>1950.0</td>
+      <td>None</td>
+      <td>[Sea Surface Temperature Reconstruction]</td>
+      <td>Franck Bassinot, Thibault de Garidel-Thoron, Y...</td>
+      <td>[{'Author': 'de Garidel-Thoron, T., Y. Rosenth...</td>
+      <td>[[{'DataTableID': '38369', 'DataTableName': 'd...</td>
+      <td>[]</td>
+    </tr>
+    <tr>
+      <th>382</th>
+      <td>8678</td>
+      <td>2764</td>
+      <td>de Garidel-Thoron et al. 2007 Warm Pool 30ka M...</td>
+      <td>PALEOCEANOGRAPHY</td>
+      <td>30000.0</td>
+      <td>0.0</td>
+      <td>-28050.0</td>
+      <td>1950.0</td>
+      <td>None</td>
+      <td>[Sea Surface Temperature Reconstruction]</td>
+      <td>Corinne Sonzogni, Edouard Bard, Luc Beaufort, ...</td>
+      <td>[{'Author': 'de Garidel-Thoron, T., Y. Rosenth...</td>
+      <td>[[{'DataTableID': '34940', 'DataTableName': 'M...</td>
+      <td>[]</td>
+    </tr>
+  </tbody>
+</table>
+<p>383 rows × 14 columns</p>
+</div></div></div>
+</div>
+<p>We have 383 studies now, far from the maximum of 500 so it seams we collected all records.</p>
+<p>You can use the same functions as described above the retrieve information. For instance, let’s have a look at the data tables:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_tables_geo</span> <span class="o">=</span> <span class="n">ds2</span><span class="o">.</span><span class="n">get_tables</span><span class="p">()</span>
+<span class="n">df_tables_geo</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>DataTableID</th>
+      <th>DataTableName</th>
+      <th>TimeUnit</th>
+      <th>FileURL</th>
+      <th>Variables</th>
+      <th>FileDescription</th>
+      <th>TotalFilesAvailable</th>
+      <th>SiteID</th>
+      <th>SiteName</th>
+      <th>LocationName</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>MinElevation</th>
+      <th>MaxElevation</th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>19791</td>
+      <td>enso_li2011</td>
+      <td>CE</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/treer...</td>
+      <td>[age, ensoi, ensovar]</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>48144</td>
+      <td>Tropical Pacific</td>
+      <td>Ocean&gt;Pacific Ocean</td>
+      <td>-20</td>
+      <td>20</td>
+      <td>None</td>
+      <td>None</td>
+      <td>11194</td>
+      <td>1,100 Year El Niño/Southern Oscillation (ENSO)...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>33108</td>
+      <td>Wang2017AMV-AMO</td>
+      <td>CE</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/recon...</td>
+      <td>[age, Atlantic Multidecadal Variability Index,...</td>
+      <td>Formatted Text Data File</td>
+      <td>1</td>
+      <td>56395</td>
+      <td>North Atlantic Ocean</td>
+      <td>Ocean&gt;Atlantic Ocean&gt;North Atlantic Ocean</td>
+      <td>0</td>
+      <td>70</td>
+      <td>None</td>
+      <td>None</td>
+      <td>22031</td>
+      <td>1200 Year Atlantic Multidecadal Variability an...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>51864</td>
+      <td>MCEOF Bird2024</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/paleo...</td>
+      <td>[pumacocha_1sig_hi, pumacocha_2sig_hi, quelcca...</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>60174</td>
+      <td>Circum-Andes Synthesis</td>
+      <td>Continent&gt;South America</td>
+      <td>-13.933</td>
+      <td>10.712</td>
+      <td>3015</td>
+      <td>3680</td>
+      <td>39047</td>
+      <td>1500 Year Sedimentological and Geochemical Dat...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>55412</td>
+      <td>bird2024 RecordsUsed</td>
+      <td>calendar year before present</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/paleo...</td>
+      <td>[]</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>60174</td>
+      <td>Circum-Andes Synthesis</td>
+      <td>Continent&gt;South America</td>
+      <td>-13.933</td>
+      <td>10.712</td>
+      <td>3015</td>
+      <td>3680</td>
+      <td>39047</td>
+      <td>1500 Year Sedimentological and Geochemical Dat...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>51863</td>
+      <td>Tota C/N, Clay Bird2024</td>
+      <td>cal yr BP</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/paleo...</td>
+      <td>[Tota_avg_depth, Tota_H13_%clay, Tota_H13_cn]</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>60952</td>
+      <td>Lake Tota</td>
+      <td>Continent&gt;South America&gt;Colombia</td>
+      <td>5.497382</td>
+      <td>-72.978709</td>
+      <td>3015</td>
+      <td>3015</td>
+      <td>39047</td>
+      <td>1500 Year Sedimentological and Geochemical Dat...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Other searches possible under the <code class="docutils literal notranslate"><span class="pre">search_studies</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">?</span>ds.search_studies
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Red">Signature:</span>
+ds.search_studies(
+    xml_id=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    noaa_id=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    data_publisher=<span class=" -Color -Color-Yellow">&#39;NOAA&#39;</span>,
+    data_type_id=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    keywords=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    investigators=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    max_lat=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    min_lat=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    max_lon=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    min_lon=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    location=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    publication=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    search_text=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    earliest_year=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    latest_year=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    cv_whats=<span class=" -Color -Color-Bold -Color-Bold-C28">None</span>,
+    recent=<span class=" -Color -Color-Bold -Color-Bold-C28">False</span>,
+    limit=<span class=" -Color -Color-Green">100</span>,
+)
+<span class=" -Color -Color-Red">Docstring:</span>
+Search for NOAA studies using the specified parameters.
+
+At least one parameter must be provided to perform a search. This method interfaces with
+the NOAA NCEI Paleo Study Search API. Use it to filter studies based on location,
+investigators, time range, keywords, and more.
+
+Parameters
+----------
+xml_id : str, optional
+    Specify the internal XML document ID. Must be an exact match (e.g., &#39;1840&#39;).
+
+noaa_id : str, optional
+    Provide the unique NOAA Study ID as a number (e.g., &#39;13156&#39;).
+
+search_text : str, optional
+    General text search across study content. Supports wildcards (%) and logical operators (AND, OR).
+    Examples: &#39;younger dryas&#39;, &#39;loess AND stratigraphy&#39;
+
+data_publisher : by default &#39;NOAA&#39;
+    Choose from: &#39;NOAA&#39;, &#39;NEOTOMA&#39;, or &#39;PANGAEA&#39;.
+    Example: &#39;NOAA&#39;
+
+data_type_id : str, optional
+    Filter by data type. Use one or more type IDs separated by &#39;|&#39;.
+    Available IDs:
+        1: BOREHOLE, 2: CLIMATE FORCING, 3: CLIMATE RECONSTRUCTIONS, 4: CORALS AND SCLEROSPONGES,
+        6: HISTORICAL, 7: ICE CORES, 8: INSECT, 9: LAKE LEVELS, 10: LOESS,
+        11: PALEOCLIMATIC MODELING, 12: FIRE HISTORY, 13: PALEOLIMNOLOGY, 14: PALEOCEANOGRAPHY,
+        15: PLANT MACROFOSSILS, 16: POLLEN, 17: SPELEOTHEMS, 18: TREE RING,
+        19: OTHER COLLECTIONS, 20: INSTRUMENTAL, 59: SOFTWARE, 60: REPOSITORY
+    Example: &#39;4|18&#39;
+
+keywords : str, optional
+    Use hierarchical terms separated by &#39;&gt;&#39;. Separate multiple values using &#39;|&#39;.
+    Example: &#39;earth science&gt;paleoclimate&gt;paleocean&gt;biomarkers&#39;
+
+investigators : str, optional
+    Specify one or more investigator names. Use &#39;|&#39; to separate multiple names.
+    Example: &#39;Wahl, E.R.|Vose, R.S.&#39;
+
+max_lat : float, optional
+    Upper bound for latitude. Must be between -90 and 90.
+    Example: 90
+
+min_lat : float, optional
+    Lower bound for latitude. Must be between -90 and 90.
+    Example: -90
+
+max_lon : float, optional
+    Upper bound for longitude. Must be between -180 and 180.
+    Example: 180
+
+min_lon : float, optional
+    Lower bound for longitude. Must be between -180 and 180.
+    Example: -180
+
+location : str, optional
+    Use region hierarchy separated by &#39;&gt;&#39;.
+    Example: &#39;Continent&gt;Africa&gt;Eastern Africa&gt;Zambia&#39;
+
+publication : str, optional
+    Match against publication metadata such as title, author, or citation.
+    Example: &#39;Khider&#39;
+
+earliest_year : int, optional
+    Starting year (can be negative for BCE). Used with `timeFormat` and `timeMethod`.
+    Example: -500
+
+latest_year : int, optional
+    Ending year. Used with `timeFormat` and `timeMethod`.
+    Example: 2020
+
+cv_whats : str, optional
+    Search using controlled vocabulary terms for measured variables.
+    Format: Hierarchical string using &#39;&gt;&#39;
+    Example: &#39;chemical composition&gt;compound&gt;inorganic compound&gt;carbon dioxide&#39;
+
+recent : bool, optional
+    Set to True to only return studies from the last two years. Results are sorted by newest.
+
+limit : int, optional
+    Set to 100 by default. Limits the number of studies retrieved. 
+
+Returns
+-------
+pandas.DataFrame
+    Response DataFrame
+    Fills the internal `studies` attribute with structured NOAA study data.
+
+Raises
+------
+ValueError
+    If no inputs are passed.
+
+requests.HTTPError
+    If the HTTP request returned an unsuccessful status code.
+
+Notes
+-----
+- At least one parameter must be specified, otherwise the API call will fail.
+<span class=" -Color -Color-Red">File:</span>      ~/Documents/GitHub/PyTUPS/pyleotups/core/Dataset.py
+<span class=" -Color -Color-Red">Type:</span>      method
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">PyleoTUPS tutorials: Using PyleoTUPS in your scientific workflows</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="noaa_to_lipd.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Converting a NOAA dataset into the LiPD format</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authors">Authors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preamble">Preamble</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#goals">Goals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-time">Reading time</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-study-id">From a study ID</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geographical-query">Geographical Query</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deborah Khider
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

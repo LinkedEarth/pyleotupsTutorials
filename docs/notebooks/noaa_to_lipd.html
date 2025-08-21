@@ -1,0 +1,1583 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Converting a NOAA dataset into the LiPD format &#8212; PyleoTUPS Tutorials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css?v=6644e6bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/noaa_to_lipd';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Querying data from the NOAA database" href="querying.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyleotups_logo.png" class="logo__image only-light" alt="PyleoTUPS Tutorials - Home"/>
+    <img src="../_static/pyleotups_logo.png" class="logo__image only-dark pst-js-only" alt="PyleoTUPS Tutorials - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    PyleoTUPS tutorials: Using PyleoTUPS in your scientific workflows
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="querying.html">Querying data from the NOAA database</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data format conversion</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Converting a NOAA dataset into the LiPD format</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/LinkedEarth/pyleotupsTutorials/main?urlpath=lab/tree/docs/notebooks/noaa_to_lipd.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Binder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Binder logo" src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/LinkedEarth/pyleotupsTutorials" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/LinkedEarth/pyleotupsTutorials/issues/new?title=Issue%20on%20page%20%2Fnotebooks/noaa_to_lipd.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/noaa_to_lipd.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Converting a NOAA dataset into the LiPD format</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authors">Authors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preamble">Preamble</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#goals">Goals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-time">Reading time</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-the-noaa-database">Querying the NOAA database.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-to-a-lipd-formatted-dataset">Converting to a LiPD-formatted dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#root-metadata">Root Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#publication-metadata">Publication Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#funding-metadata">Funding Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geographic-metadata">Geographic Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#paleodata-metadata">PaleoData Metadata</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-a-lipd-file">Writing a LiPD file</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div style="text-align: center">
+<img src="https://github.com/LinkedEarth/Logos/blob/master/PyleoTUPS/pyleotups_logo.png?raw=true" alt="PyleoTUPS logo" width="400">
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="converting-a-noaa-dataset-into-the-lipd-format">
+<h1>Converting a NOAA dataset into the LiPD format<a class="headerlink" href="#converting-a-noaa-dataset-into-the-lipd-format" title="Link to this heading">#</a></h1>
+<section id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Link to this heading">#</a></h2>
+<p>Deborah Khider
+<a href="https://orcid.org/0000-0001-7501-8430" target="_blank" rel="noopener noreferrer">
+<img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID iD" style="vertical-align: text-bottom;"/>
+</a></p>
+</section>
+<section id="preamble">
+<h2>Preamble<a class="headerlink" href="#preamble" title="Link to this heading">#</a></h2>
+<p>This tutorial showcases how to create a LiPD file from a NOAA dataset.</p>
+<section id="goals">
+<h3>Goals<a class="headerlink" href="#goals" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Understanding how to get relevant information from NOAA Data Center</p></li>
+<li><p>Use <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/index.html">PyLiPD</a> to create a LiPD file from the retrieved information.</p></li>
+</ul>
+</section>
+<section id="pre-requisites">
+<h3>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>An understanding of PyLiPD classes and how to create a LiPD file from <a class="reference external" href="https://linked.earth/pylipdTutorials/notebooks/L3_c_create_template.html">this tutorial</a>.</p></li>
+</ul>
+</section>
+<section id="reading-time">
+<h3>Reading time<a class="headerlink" href="#reading-time" title="Link to this heading">#</a></h3>
+<p>Let’s import our packages!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyleotups</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylipd.classes.dataset</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.archivetype</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArchiveTypeConstants</span><span class="p">,</span> <span class="n">ArchiveType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.funding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Funding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.interpretation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Interpretation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.interpretationvariable</span><span class="w"> </span><span class="kn">import</span> <span class="n">InterpretationVariableConstants</span><span class="p">,</span> <span class="n">InterpretationVariable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.location</span><span class="w"> </span><span class="kn">import</span> <span class="n">Location</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.paleodata</span><span class="w"> </span><span class="kn">import</span> <span class="n">PaleoData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.datatable</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.paleounit</span><span class="w"> </span><span class="kn">import</span> <span class="n">PaleoUnitConstants</span><span class="p">,</span> <span class="n">PaleoUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.paleovariable</span><span class="w"> </span><span class="kn">import</span> <span class="n">PaleoVariableConstants</span><span class="p">,</span> <span class="n">PaleoVariable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.person</span><span class="w"> </span><span class="kn">import</span> <span class="n">Person</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.publication</span><span class="w"> </span><span class="kn">import</span> <span class="n">Publication</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.resolution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Resolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.variable</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.chrondata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChronData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.classes.compilation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compilation</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiPD</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="demonstration">
+<h2>Demonstration<a class="headerlink" href="#demonstration" title="Link to this heading">#</a></h2>
+<section id="querying-the-noaa-database">
+<h3>Querying the NOAA database.<a class="headerlink" href="#querying-the-noaa-database" title="Link to this heading">#</a></h3>
+<p>The first step is to create a <code class="docutils literal notranslate"><span class="pre">pyleotups.Dataset</span></code> object in which we will store the relevant information</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">=</span><span class="n">Dataset</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now that this is done, let’s search using the study ID. Here we are interesting in converting the dataset from <a class="reference internal" href="#doi.org/10.1126/science.aax2000"><span class="xref myst">Dee et al. (2020)</span></a>, a monthly-resolved coral aragonite oxygen isotope (<span class="math notranslate nohighlight">\(\delta^{18}\)</span>O) record from Palmyra Island.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">search_studies</span><span class="p">(</span><span class="n">noaa_id</span><span class="o">=</span><span class="mi">27490</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Parsing NOAA studies: 100%|█████████████████████| 1/1 [00:00&lt;00:00, 3194.44it/s]
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>XMLID</th>
+      <th>StudyName</th>
+      <th>DataType</th>
+      <th>EarliestYearBP</th>
+      <th>MostRecentYearBP</th>
+      <th>EarliestYearCE</th>
+      <th>MostRecentYearCE</th>
+      <th>StudyNotes</th>
+      <th>ScienceKeywords</th>
+      <th>Investigators</th>
+      <th>Publications</th>
+      <th>Sites</th>
+      <th>Funding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>27490</td>
+      <td>67635</td>
+      <td>Palmyra 860 Year Modern and Fossil Coral Oxyge...</td>
+      <td>CORALS AND SCLEROSPONGES</td>
+      <td>804</td>
+      <td>-56</td>
+      <td>1146</td>
+      <td>2006</td>
+      <td>Monthly-resolved coral aragonite oxygen isotop...</td>
+      <td>None</td>
+      <td>Sylvia Dee, Kim Cobb, Julien Emile-Geay, Toby ...</td>
+      <td>[{'Author': 'Sylvia G. Dee, Kim M. Cobb, Julie...</td>
+      <td>[[{'DataTableID': '41697', 'DataTableName': 'P...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Let’s get some information about the dataset that we can later use to create the LiPD dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_summary</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_summary</span><span class="p">()</span>
+
+<span class="n">df_summary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>XMLID</th>
+      <th>StudyName</th>
+      <th>DataType</th>
+      <th>EarliestYearBP</th>
+      <th>MostRecentYearBP</th>
+      <th>EarliestYearCE</th>
+      <th>MostRecentYearCE</th>
+      <th>StudyNotes</th>
+      <th>ScienceKeywords</th>
+      <th>Investigators</th>
+      <th>Publications</th>
+      <th>Sites</th>
+      <th>Funding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>27490</td>
+      <td>67635</td>
+      <td>Palmyra 860 Year Modern and Fossil Coral Oxyge...</td>
+      <td>CORALS AND SCLEROSPONGES</td>
+      <td>804</td>
+      <td>-56</td>
+      <td>1146</td>
+      <td>2006</td>
+      <td>Monthly-resolved coral aragonite oxygen isotop...</td>
+      <td>None</td>
+      <td>Sylvia Dee, Kim Cobb, Julien Emile-Geay, Toby ...</td>
+      <td>[{'Author': 'Sylvia G. Dee, Kim M. Cobb, Julie...</td>
+      <td>[[{'DataTableID': '41697', 'DataTableName': 'P...</td>
+      <td>[{'fundingAgency': 'US National Science Founda...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>And some information about the publications:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bib</span><span class="p">,</span> <span class="n">df_pub</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_publications</span><span class="p">()</span>
+<span class="n">df_pub</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Author</th>
+      <th>Title</th>
+      <th>Journal</th>
+      <th>Year</th>
+      <th>Volume</th>
+      <th>Number</th>
+      <th>Pages</th>
+      <th>Type</th>
+      <th>DOI</th>
+      <th>URL</th>
+      <th>CitationKey</th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Sylvia G. Dee, Kim M. Cobb, Julien Emile-Geay,...</td>
+      <td>No consistent ENSO response to volcanic forcin...</td>
+      <td>Science</td>
+      <td>2020</td>
+      <td>367</td>
+      <td>6485</td>
+      <td>1477-1481</td>
+      <td>publication</td>
+      <td>10.1126/science.aax2000</td>
+      <td>http://dx.doi.org/10.1126/science.aax2000</td>
+      <td>Charles_Consistent_2020_27490</td>
+      <td>27490</td>
+      <td>Palmyra 860 Year Modern and Fossil Coral Oxyge...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Let’s get some information about the geographical information:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_geo</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_geo</span><span class="p">()</span>
+<span class="n">df_geo</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>DataType</th>
+      <th>SiteID</th>
+      <th>SiteName</th>
+      <th>LocationName</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>MinElevation</th>
+      <th>MaxElevation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>27490</td>
+      <td>CORALS AND SCLEROSPONGES</td>
+      <td>1900</td>
+      <td>Palmyra Island</td>
+      <td>Ocean&gt;Pacific Ocean&gt;Central Pacific Ocean</td>
+      <td>5.8664</td>
+      <td>-162.12</td>
+      <td>-9</td>
+      <td>-9</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Let’s get some information about the funding:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_fund</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_funding</span><span class="p">()</span>
+<span class="n">df_fund</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+      <th>FundingAgency</th>
+      <th>FundingGrant</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>27490</td>
+      <td>Palmyra 860 Year Modern and Fossil Coral Oxyge...</td>
+      <td>US National Science Foundation</td>
+      <td>MGG 0752091, 1502832, 1836645; EAR-1347213</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Finally, let’s get information about the data tables present in the file:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_tables</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_tables</span><span class="p">()</span>
+<span class="n">df_tables</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>DataTableID</th>
+      <th>DataTableName</th>
+      <th>TimeUnit</th>
+      <th>FileURL</th>
+      <th>Variables</th>
+      <th>FileDescription</th>
+      <th>TotalFilesAvailable</th>
+      <th>SiteID</th>
+      <th>SiteName</th>
+      <th>LocationName</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>MinElevation</th>
+      <th>MaxElevation</th>
+      <th>StudyID</th>
+      <th>StudyName</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>41697</td>
+      <td>Palmyra2020d18O</td>
+      <td>CE</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/coral...</td>
+      <td>[age, d18O]</td>
+      <td>NOAA Template File</td>
+      <td>1</td>
+      <td>1900</td>
+      <td>Palmyra Island</td>
+      <td>Ocean&gt;Pacific Ocean&gt;Central Pacific Ocean</td>
+      <td>5.8664</td>
+      <td>-162.12</td>
+      <td>-9</td>
+      <td>-9</td>
+      <td>27490</td>
+      <td>Palmyra 860 Year Modern and Fossil Coral Oxyge...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>There is only one table present, let’s put it into a Pandas DataFrame:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dfs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">dataTableIDs</span><span class="o">=</span><span class="s2">&quot;41697&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>d18O</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1146.375</td>
+      <td>-4.749</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1146.4583</td>
+      <td>-4.672</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1146.5417</td>
+      <td>-4.724</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1146.625</td>
+      <td>-4.717</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1146.7083</td>
+      <td>-4.8947</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>We need to coerce the values to numeric:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_data</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And let’s get some variable information:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_var</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_variables</span><span class="p">(</span><span class="n">dataTableIDs</span><span class="o">=</span><span class="s2">&quot;41697&quot;</span><span class="p">)</span>
+<span class="n">df_var</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>StudyID</th>
+      <th>SiteID</th>
+      <th>FileURL</th>
+      <th>VariableName</th>
+      <th>cvDataType</th>
+      <th>cvWhat</th>
+      <th>cvMaterial</th>
+      <th>cvError</th>
+      <th>cvUnit</th>
+      <th>cvSeasonality</th>
+      <th>cvDetail</th>
+      <th>cvMethod</th>
+      <th>cvAdditionalInfo</th>
+      <th>cvFormat</th>
+      <th>cvShortName</th>
+    </tr>
+    <tr>
+      <th>DataTableID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>41697</th>
+      <td>27490</td>
+      <td>1900</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/coral...</td>
+      <td>age</td>
+      <td>CORALS AND SCLEROSPONGES</td>
+      <td>age variable&gt;age</td>
+      <td>None</td>
+      <td>None</td>
+      <td>time unit&gt;age unit&gt;year Common Era</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>Numeric</td>
+      <td>age</td>
+    </tr>
+    <tr>
+      <th>41697</th>
+      <td>27490</td>
+      <td>1900</td>
+      <td>https://www.ncei.noaa.gov/pub/data/paleo/coral...</td>
+      <td>d18O</td>
+      <td>CORALS AND SCLEROSPONGES</td>
+      <td>chemical composition&gt;isotope&gt;isotope ratio&gt;del...</td>
+      <td>biological material&gt;organism&gt;coral&gt;Porites sp....</td>
+      <td>None</td>
+      <td>concentration unit&gt;parts per notation unit&gt;par...</td>
+      <td>None</td>
+      <td>None</td>
+      <td>laboratory method&gt;spectroscopy&gt;mass spectromet...</td>
+      <td>None</td>
+      <td>Numeric</td>
+      <td>d18O</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Now that we have all the necessary information, let’s convert into a LiPD format!</p>
+</section>
+<section id="converting-to-a-lipd-formatted-dataset">
+<h3>Converting to a LiPD-formatted dataset<a class="headerlink" href="#converting-to-a-lipd-formatted-dataset" title="Link to this heading">#</a></h3>
+<section id="root-metadata">
+<h4>Root Metadata<a class="headerlink" href="#root-metadata" title="Link to this heading">#</a></h4>
+<p>Let’s start by created a <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/api.html#pylipd.classes.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">pylipd.Dataset</span></code></a> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsl</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s add root metadata such as the name of the dataset, type of archive and datasetID:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsl</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s1">&#39;Palmyra.Dee.2020&#39;</span><span class="p">)</span>
+<span class="n">archiveType</span> <span class="o">=</span> <span class="n">ArchiveType</span><span class="o">.</span><span class="n">from_synonym</span><span class="p">(</span><span class="s1">&#39;Coral&#39;</span><span class="p">)</span>
+<span class="n">dsl</span><span class="o">.</span><span class="n">setArchiveType</span><span class="p">(</span><span class="n">ArchiveType</span><span class="p">)</span>
+<span class="n">dsl</span><span class="o">.</span><span class="n">setOriginalDataUrl</span><span class="p">(</span><span class="s1">&#39;https://www.ncei.noaa.gov/pub/data/paleo/coral/east_pacific/palmyra2020d18o.txt&#39;</span><span class="p">)</span>
+<span class="n">dsl</span><span class="o">.</span><span class="n">setDatasetId</span><span class="p">(</span><span class="s1">&#39;DP2020PC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s add the invrstigators of the study, which are found in the <code class="docutils literal notranslate"><span class="pre">df_summary</span></code>. To do so, we need to create a <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/api.html#pylipd.classes.publication.Person"><code class="docutils literal notranslate"><span class="pre">Person</span> <span class="pre">object</span></code></a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">extract_last_name_and_initials</span><span class="p">(</span><span class="n">full_name</span><span class="p">):</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">full_name</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initials</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
+    <span class="k">return</span> <span class="n">last_name</span><span class="p">,</span> <span class="n">initials</span>
+
+
+<span class="n">authors</span> <span class="o">=</span> <span class="n">df_summary</span><span class="p">[</span><span class="s1">&#39;Investigators&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Step 1: Split the string by commas</span>
+<span class="n">parts</span> <span class="o">=</span> <span class="n">authors</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+<span class="c1"># Prepare a list to hold the formatted names</span>
+<span class="n">investigators</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Step 2: Iterate over the parts to process each</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>  <span class="c1"># Step by 2 since each name and initial are next to each other</span>
+    <span class="n">last_name</span><span class="p">,</span><span class="n">initial</span> <span class="o">=</span> <span class="n">extract_last_name_and_initials</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span> <span class="c1"># create the Person object</span>
+    <span class="n">person</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">initial</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">investigators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Store the list of Persons into the ds object</span>
+<span class="n">dsl</span><span class="o">.</span><span class="n">setInvestigators</span><span class="p">(</span><span class="n">investigators</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="publication-metadata">
+<h4>Publication Metadata<a class="headerlink" href="#publication-metadata" title="Link to this heading">#</a></h4>
+<p>Let’s add a publication object to our dataset from the information in <code class="docutils literal notranslate"><span class="pre">df_pub</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pub</span> <span class="o">=</span> <span class="n">Publication</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s start with the authors</span>
+
+<span class="n">authors</span> <span class="o">=</span> <span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;Author&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Step 1: Split the string by commas</span>
+<span class="n">parts</span> <span class="o">=</span> <span class="n">authors</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+<span class="c1"># Prepare a list to hold the formatted names</span>
+<span class="n">investigators</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Step 2: Iterate over the parts to process each</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>  <span class="c1"># Step by 2 since each name and initial are next to each other</span>
+    <span class="n">last_name</span><span class="p">,</span><span class="n">initial</span> <span class="o">=</span> <span class="n">extract_last_name_and_initials</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span> <span class="c1"># create the Person object</span>
+    <span class="n">person</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">initial</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">investigators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Store the list of Persons into the ds object</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setAuthors</span><span class="p">(</span><span class="n">investigators</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s get the rest of the information:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pub</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;Title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setJournal</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;Journal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setYear</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setVolume</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;Volume&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setPages</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;Pages&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setDOI</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;DOI&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setUrls</span><span class="p">([</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">pub</span><span class="o">.</span><span class="n">setCiteKey</span><span class="p">(</span><span class="n">df_pub</span><span class="p">[</span><span class="s1">&#39;CitationKey&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s add our publication objet to the dataset:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsl</span><span class="o">.</span><span class="n">setPublications</span><span class="p">([</span><span class="n">pub</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="funding-metadata">
+<h4>Funding Metadata<a class="headerlink" href="#funding-metadata" title="Link to this heading">#</a></h4>
+<p>Let’s add information about the funding from <code class="docutils literal notranslate"><span class="pre">df_fund</span></code>. First let’s grab the names of all the grants.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_grants</span><span class="p">(</span><span class="n">grant_string</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Split different grant groups using semicolon</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">grant_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># Match prefix followed by space or hyphen, then numbers</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([A-Z]</span><span class="si">{3}</span><span class="s1">)[\s-]+(.+)&#39;</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">number_part</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">numbers</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">number_part</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="n">grants</span> <span class="o">=</span> <span class="n">parse_grants</span><span class="p">(</span><span class="n">df_fund</span><span class="p">[</span><span class="s1">&#39;FundingGrant&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">grants</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;MGG-0752091&#39;, &#39;MGG-1502832&#39;, &#39;MGG-1836645&#39;, &#39;EAR-1347213&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s create a <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/api.html#pylipd.classes.funding.Funding"><code class="docutils literal notranslate"><span class="pre">Funding</span></code> object</a> and add it to the <code class="docutils literal notranslate"><span class="pre">Dataset</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fund</span> <span class="o">=</span> <span class="n">Funding</span><span class="p">()</span>
+<span class="n">fund</span><span class="o">.</span><span class="n">setFundingAgency</span><span class="p">(</span><span class="n">df_fund</span><span class="p">[</span><span class="s1">&#39;FundingAgency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">fund</span><span class="o">.</span><span class="n">setGrants</span><span class="p">(</span><span class="n">grants</span><span class="p">)</span>                
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsl</span><span class="o">.</span><span class="n">setFundings</span><span class="p">([</span><span class="n">fund</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="geographic-metadata">
+<h4>Geographic Metadata<a class="headerlink" href="#geographic-metadata" title="Link to this heading">#</a></h4>
+<p>Let’s add information about the location associated with the dataset from <code class="docutils literal notranslate"><span class="pre">df_geo</span></code>. To do so, we need to create a <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/api.html#pylipd.classes.location.Location"><code class="docutils literal notranslate"><span class="pre">Location</span></code> object</a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loc</span> <span class="o">=</span> <span class="n">Location</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loc</span><span class="o">.</span><span class="n">setLatitude</span><span class="p">(</span><span class="n">df_geo</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">loc</span><span class="o">.</span><span class="n">setLongitude</span><span class="p">(</span><span class="n">df_geo</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">loc</span><span class="o">.</span><span class="n">setElevation</span><span class="p">(</span><span class="n">df_geo</span><span class="p">[</span><span class="s1">&#39;MinElevation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">loc</span><span class="o">.</span><span class="n">setSiteName</span><span class="p">(</span><span class="n">df_geo</span><span class="p">[</span><span class="s1">&#39;SiteName&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">loc</span><span class="o">.</span><span class="n">setLocationName</span><span class="p">(</span><span class="n">df_geo</span><span class="p">[</span><span class="s1">&#39;LocationName&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsl</span><span class="o">.</span><span class="n">setLocation</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="paleodata-metadata">
+<h4>PaleoData Metadata<a class="headerlink" href="#paleodata-metadata" title="Link to this heading">#</a></h4>
+<p>Let’s enter the information relating to the paleoData. The data itself is stored in <code class="docutils literal notranslate"><span class="pre">df_data</span></code> while the metadata information about the variables is in <code class="docutils literal notranslate"><span class="pre">df_var</span></code>. Let’s first create our <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/api.html#pylipd.classes.paleodata.PaleoData"><code class="docutils literal notranslate"><span class="pre">PaleoData</span></code> object</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paleodata</span> <span class="o">=</span> <span class="n">PaleoData</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our next step is to create measurement tables in this object. To do so, we can use the <a class="reference external" href="https://pylipd.readthedocs.io/en/latest/api.html#pylipd.classes.datatable.DataTable"><code class="docutils literal notranslate"><span class="pre">DataTable</span></code> object</a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">table</span> <span class="o">=</span> <span class="n">DataTable</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now let’s add some information about the table such as the name and the value use for missin values in the data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">setFileName</span><span class="p">(</span><span class="s2">&quot;paleo0measurement0.csv&quot;</span><span class="p">)</span>
+<span class="n">table</span><span class="o">.</span><span class="n">setMissingValue</span><span class="p">(</span><span class="s2">&quot;NaN&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The next step is to add columns to our table. In other words, we need to create some variables.</p>
+<p>In LiPD, each variable is also given a unique ID. The function below generates one:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_unique_id</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;CPD&#39;</span><span class="p">):</span>
+    <span class="c1"># Generate a random UUID</span>
+    <span class="n">random_uuid</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>  <span class="c1"># Generates a random UUID.</span>
+    
+    <span class="c1"># Convert UUID format to the specific format we need</span>
+    <span class="c1"># UUID is usually in the form &#39;1e2a2846-2048-480b-9ec6-674daef472bd&#39; so we slice and insert accordingly</span>
+    <span class="n">id_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random_uuid</span><span class="p">)</span>
+    <span class="n">formatted_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">id_str</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="k">return</span> <span class="n">formatted_id</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since variable names and units are controlled in LiPD, let’s see if we can get synonyms before we proceed. Let’s start with the standard variable name:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">check_names</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_var</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">check_names</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;VariableName&#39;</span><span class="p">]]</span><span class="o">=</span> <span class="n">PaleoVariable</span><span class="o">.</span><span class="n">from_synonym</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;VariableName&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">label</span>
+
+<span class="n">check_names</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;age&#39;: &#39;age&#39;, &#39;d18O&#39;: &#39;d18O&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+<p>This looks good, let’s have a look at the units:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">check_units</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_var</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;cvUnit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">check_units</span><span class="p">[</span><span class="n">unit</span><span class="p">]</span><span class="o">=</span> <span class="n">PaleoUnit</span><span class="o">.</span><span class="n">from_synonym</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">label</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;cvUnit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">check_units</span><span class="p">[</span><span class="n">unit</span><span class="p">]</span><span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">check_units</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;year Common Era&#39;: &#39;yr AD&#39;, &#39;per mil VPDB&#39;: None}
+</pre></div>
+</div>
+</div>
+</div>
+<p>The “per mil VPDB” unit is not recognized automatically (not in the thesaurus). Let’s have a look at the <a class="reference external" href="https://linked.earth/pylipdTutorials/notebooks/L3_c_create_template.html#">standard unit names</a> and see if we can manually select one that will match.</p>
+<p>The <a class="reference external" href="https://lipdverse.org/vocabulary/paleodata_units/#permil">permil</a> entry will match, so let’s use this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Resolution</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">Res</span> <span class="o">=</span> <span class="n">Resolution</span><span class="p">()</span> <span class="c1"># create a Resolution object - it will be the same for all variables since it is based on time</span>
+<span class="n">Res</span><span class="o">.</span><span class="n">setMinValue</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+<span class="n">Res</span><span class="o">.</span><span class="n">setMaxValue</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+<span class="n">Res</span><span class="o">.</span><span class="n">setMeanValue</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+<span class="n">Res</span><span class="o">.</span><span class="n">setMedianValue</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylipd.globals.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITSURL</span>
+<span class="n">mynewunit</span> <span class="o">=</span> <span class="n">PaleoUnit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">UNITSURL</span><span class="si">}</span><span class="s2">#year&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">)</span>
+<span class="n">Res</span><span class="o">.</span><span class="n">setUnits</span><span class="p">(</span><span class="n">mynewunit</span><span class="p">)</span>
+
+<span class="c1"># Compilation</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">Compilation</span><span class="p">()</span> <span class="c1"># create a compilation object</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s1">&#39;Pages2kTemperature&#39;</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">setVersion</span><span class="p">(</span><span class="s1">&#39;2_2_0&#39;</span><span class="p">)</span>
+
+<span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_var</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">()</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;VariableName&#39;</span><span class="p">])</span> <span class="c1"># name of the variable</span>
+    <span class="c1"># Now let&#39;s do the standard name</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setStandardVariable</span><span class="p">(</span><span class="n">PaleoVariable</span><span class="o">.</span><span class="n">from_synonym</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;VariableName&#39;</span><span class="p">]))</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setColumnNumber</span><span class="p">(</span><span class="n">counter</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#The column in which the data is stored. Note that LiPD uses index 1</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setVariableId</span><span class="p">(</span><span class="n">generate_unique_id</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PCU&#39;</span><span class="p">))</span> <span class="c1"># create a unique ID for the variable - change prefix if needed</span>
+    <span class="c1"># Units</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;cvUnit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">unit</span><span class="o">==</span><span class="s1">&#39;per mil VPDB&#39;</span><span class="p">:</span>
+        <span class="n">var</span><span class="o">.</span><span class="n">setUnits</span><span class="p">(</span><span class="n">PaleoUnit</span><span class="o">.</span><span class="n">from_synonym</span><span class="p">(</span><span class="s1">&#39;permil&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">var</span><span class="o">.</span><span class="n">setUnits</span><span class="p">(</span><span class="n">PaleoUnit</span><span class="o">.</span><span class="n">from_synonym</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+    <span class="c1"># Make sure the data is JSON writable (no numpy arrays or Pandas DataFrame)</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">counter</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+    <span class="c1"># Calculate some metadata about the values - this makes it easier to do some queries later on, including looking for data in a particular time slice. </span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setMinValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">counter</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()))</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setMaxValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">counter</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setMeanValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">counter</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setMedianValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">counter</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()))</span>
+    <span class="c1"># Attach the resolution metadata information to the variable</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">setResolution</span><span class="p">(</span><span class="n">Res</span><span class="p">)</span>
+    <span class="c1"># if the variable in d18O, add information about the compilation</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;VariableName&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;d18O&#39;</span><span class="p">:</span>
+        <span class="n">var</span><span class="o">.</span><span class="n">setPartOfCompilation</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+    <span class="c1"># append in the list</span>
+    <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> 
+    <span class="c1"># add to the counter</span>
+    <span class="n">counter</span><span class="o">+=</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pass
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s now put our variables in the <code class="docutils literal notranslate"><span class="pre">DataTable</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">setVariables</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Table</span></code> into the <code class="docutils literal notranslate"><span class="pre">PaleoData</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paleodata</span><span class="o">.</span><span class="n">setMeasurementTables</span><span class="p">([</span><span class="n">table</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And finally, the <code class="docutils literal notranslate"><span class="pre">PaleoData</span></code> object into the <code class="docutils literal notranslate"><span class="pre">Dataset</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsl</span><span class="o">.</span><span class="n">setPaleoData</span><span class="p">([</span><span class="n">paleodata</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="writing-a-lipd-file">
+<h3>Writing a LiPD file<a class="headerlink" href="#writing-a-lipd-file" title="Link to this heading">#</a></h3>
+<p>The last step in this process is to write to a LiPD file. To do so, you need to pass the Dataset <code class="docutils literal notranslate"><span class="pre">dsl</span></code> back into a LiPD object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lipd</span> <span class="o">=</span> <span class="n">LiPD</span><span class="p">()</span>
+<span class="n">lipd</span><span class="o">.</span><span class="n">load_datasets</span><span class="p">([</span><span class="n">dsl</span><span class="p">])</span>
+<span class="n">lipd</span><span class="o">.</span><span class="n">create_lipd</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="s2">&quot;../data/Palmyra.Dee.2020.lpd&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<p>Dee, S. G., Cobb, K. M., Emile-Geay, J., Ault, T. R., Edwards, R. L., Cheng, H., &amp; Charles, C. D. (2020). No consistent ENSO response to volcanic forcing over the last millennium. Science (New York, N.Y.), 367(6485), 1477–1481. doi:10.1126/science.aax2000.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="querying.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Querying data from the NOAA database</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authors">Authors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preamble">Preamble</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#goals">Goals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-time">Reading time</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-the-noaa-database">Querying the NOAA database.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-to-a-lipd-formatted-dataset">Converting to a LiPD-formatted dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#root-metadata">Root Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#publication-metadata">Publication Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#funding-metadata">Funding Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geographic-metadata">Geographic Metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#paleodata-metadata">PaleoData Metadata</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-a-lipd-file">Writing a LiPD file</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deborah Khider
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

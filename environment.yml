@@ -1,0 +1,14 @@
+name: pyleotups
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - pytest
+      - pandas
+      - requests
+      - pybtex
+      - tqdm
+      - git+https://github.com/LinkedEarth/pyleotups.git@main
