@@ -1,0 +1,12 @@
+cff-version: 0.0.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Khider"
+    given-names: "Deborah"
+    orcid: "https://orcid.org/0000-0001-7501-8430"
+
+title: "PyleoTUPSTutorials: Using PyleoTUPS in your scientific workflows"
+version: v2025.08.21
+date-released: 2025-08-21
+doi: 10.5281/zenodo.16923278
+url: "https://github.com/LinkedEarth/pyleotupsTutorials"
