@@ -5,10 +5,25 @@
 [![NSF-2411267](https://img.shields.io/badge/NSF-2411267-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2411267)
 
 
-# pyleotupsTutorials
+# Pyleotups Tutorials
 
 
-Tutorials for the [PyleoTUPS](https://pyleotups.readthedocs.io/en/latest/) package. The tutorials are built using Jupyter Book and are available for viewing [here](https://linked.earth/pyleotupsTutorials/intro.html). 
+Tutorials for the [PyleoTUPS](https://pyleotups.readthedocs.io/en/latest/) package. The tutorials are built using Jupyter Book and are available for viewing [here](https://linked.earth/pyleotupsTutorials/). 
+
+## What is PyleoTUPS?
+
+ Python package developed by [LinkedEarth](https://linked.earth) to automate the extraction and processing of paleoclimate data. It is specifically designed to address the bottleneck of manually formatting diverse datasets from major repositories like NOAA NCEI Paleoclimate and PANGAEA. 
+
+**Key Features**
+
+* Automated Data Extraction: Employs specialized techniques to parse diverse file formats and legacy templates.
+* Scientific Integration: Returns data as pandas DataFrames, simplifying integration with Python data analysis ecosystems.
+* Metadata Preservation: Captures metadata context within dictionaries and DataFrame attributes.
+* FAIR Compliance: Supports the Linked Paleo Data (LiPD) standard to enhance data accessibility and reuse
+
+The package can be installed via PyPI:
+
+```pip install pyleotups```
 
 
 ## Contributors

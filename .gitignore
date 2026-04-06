@@ -2,3 +2,5 @@
 /notebooks/.ipynb_checkpoints
 notebooks/.virtual_documents/noaa_to_lipd.ipynb
 _build/*
+# MyST build outputs
+_build
