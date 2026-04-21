@@ -29,23 +29,20 @@ The **National Oceanic and Atmospheric Administration (NOAA)** maintains the **N
 
 NOAA datasets are organized hierarchically:
 
-```
-Study (or "Individual Dataset")
-├── Sites (with geographic coordinates)
-│   └── Paleo Data 
-│       └── Data Tables (spreadsheet-like table)
-│           └── Files (text, CSV, Excel)
-└── Metadata
-    ├── Authors/Investigators
-    ├── Funding Information
-    ├── Publication Citation
-    └── Links to raw files
-```
+![\[noaa_ER_diagram.png\]](../noaa_ER_diagram.png)
 
 **Key Concepts:**
 - **Study**: A research publication or dataset. Each study has a unique NOAA Study ID (e.g., `13156`)
 - **Site**: A specific geographic location where measurements were taken
 - **Data Table**: The actual data, often embedded in text files with varying file extensions and formats
+
+**Entity Relations:**
+In NOAA, data is organized in a hierarchical, one-to-many structure:
+
+- A Study (a publication or dataset) can contain multiple Sites
+- Each Site can contain multiple Paleo Data records
+- Each Paleo Data entry can include multiple Data Files (e.g., CSV, TXT)
+- Each Data File may correspond to one or more Data Tables [Generally, NOAA Template files have one table, however, old files contain multiple tables] 
 
 ### NOAA API Endpoints
 
