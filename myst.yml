@@ -14,6 +14,7 @@ project:
     - title: Working with PyleoTUPS
       children:
         - file: notebooks/02_a_NOAAObject.ipynb
+        - file: notebooks/02_b_PANGAEAObject.ipynb
         - file: notebooks/02_c_NOAASearch.ipynb
     
 site:
