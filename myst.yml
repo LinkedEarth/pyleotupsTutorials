@@ -16,6 +16,10 @@ project:
         - file: notebooks/02_a_NOAAObject.ipynb
         - file: notebooks/02_b_PANGAEAObject.ipynb
         - file: notebooks/02_c_NOAASearch.ipynb
+        - file: notebooks/02_d_PANGAEASearch.ipynb
+    - title: Doing Science with PyleoTUPS
+      children:
+        - file: notebooks/03_a_noaa_to_lipd.ipynb  
     
 site:
   template: book-theme
