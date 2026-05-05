@@ -15,6 +15,7 @@ project:
       children:
         - file: notebooks/01_a_DataProvider.md
         - file: notebooks/01_b_PyeloTUPSDesign.md
+        - file: notebooks/01_c_PangaeaCredentialSetup.md
 
     - file: README.md
     - title: Working with PyleoTUPS
