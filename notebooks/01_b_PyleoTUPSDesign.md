@@ -182,10 +182,12 @@ print(locations[['site_name', 'latitude', 'longitude']])
 
 ### 6. get_data(identifier)
 
-**What it does**: Extract the actual measurement data from a study
+**What it does**: 
+- With pyleotups, you can easily access the NOAA datasets written in the text files into pandas Dataframe automatically. Our rule based parsers extract the tables for most of the files of majority formats.
+
 
 **Parameters**:
-- `identifier` – Study ID or DOI (string)
+- `identifier` – Study ID in NOAA or DOI in Pangaea 
 
 **Returns**: DataFrame with measurements + metadata
 - **Columns**: Time axis (age, depth, or year), measured values (δ18O, ring width, etc.), uncertainty
@@ -228,6 +230,8 @@ Available when using `NOAADataset.search_studies()`:
 | `earliest_year`, `latest_year` | Time window | `earliest_year=-8000, latest_year=-1000` (BP/CE) |
 | `min_elevation`, `max_elevation` | Elevation range in meters | `min_elevation=0, max_elevation=3000` |
 | `reconstruction` | Climate reconstructions only | `reconstruction=True` |
+
+**Refer [this link](https://www.ncei.noaa.gov/access/paleo-search/api) for detailed options**
 
 **When to use**: When `search_text` and location filters aren't specific enough
 
@@ -398,8 +402,12 @@ The unified interface means:
 
 ---
 
-## Next Steps
+## Next Sections:
 
-- See **DataProviders.md** for details on NOAA and PANGAEA repositories
-- See **Tutorials** for step-by-step workflows and code examples
-- See **API Reference** for complete parameter documentation
+- [Working with PyeloTUPS](02_a_NOAAObject.ipynb) (Tutorials using the NOAA & Pangaea Dataset objects)
+
+## References:
+
+- PyleoTUPS Documentation: https://pyleotups.readthedocs.io/en/latest/
+- NOAA API Documentation: https://www.ncei.noaa.gov/access/paleo-search/api
+- Pangaea Search API Documentation: https://wiki.pangaea.de/wiki/PANGAEA_search

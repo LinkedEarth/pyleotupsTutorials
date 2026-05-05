@@ -6,7 +6,7 @@ PyleoTUPS integrates with two major paleoclimate data repositories to provide re
 
 ### Data Provider:
 
-In PyleoTUPS, a "Data Provider" is a backend paleoclimate repository that:
+In PyleoTUPS, a "Data Provider" is a paleoclimate repository that:
 - Hosts paleoclimate datasets (tree rings, ice cores, marine records, etc.)
 - Provides search/query capabilities via an API or web interface
 - Stores metadata (location, authors, time periods, variables measured)
@@ -25,16 +25,29 @@ PyleoTUPS acts as a bridge between you and these repositories, handling API call
 
 The **National Oceanic and Atmospheric Administration (NOAA)** maintains the **NCEI Paleoclimate Global Monitoring Program**, one of the world's largest collections of paleoclimate data. 
 
-### NOAA Data Organization
+### Understanding the NOAA Data Structure
 
-NOAA datasets are organized hierarchically:
-
-![\[noaa_ER_diagram.png\]](../noaa_ER_diagram.png)
+```
+Study (or "Individual Dataset")
+├── Sites (with geographic coordinates)
+│   └── Paleo Data 
+│       └── Data Tables (spreadsheet-like table)
+│           └── Files (text, CSV, Excel)
+└── Metadata
+    ├── Authors/Investigators
+    ├── Funding Information
+    ├── Publication Citation
+    └── Links to raw files
+```
 
 **Key Concepts:**
 - **Study**: A research publication or dataset. Each study has a unique NOAA Study ID (e.g., `13156`)
 - **Site**: A specific geographic location where measurements were taken
 - **Data Table**: The actual data, often embedded in text files with varying file extensions and formats
+
+NOAA datasets are organized hierarchically:
+
+![\[noaa_ER_diagram.png\]](../noaa_ER_diagram.png)
 
 **Entity Relations:**
 In NOAA, data is organized in a hierarchical, one-to-many structure:
@@ -68,7 +81,7 @@ The API accepts a rich set of query parameters [\[View complete list here\]](htt
 
 ### How PyleoTUPS Uses NOAA
 
-When you call `NOAADataset.search_studies(**kwargs)`:
+When you call `NOAADataset.search_studies( <params> )`:
 
 1. **Query Building** → Translates Pythonic parameter names to NOAA API names
 2. **API Request** → Makes HTTP GET request to the NOAA study search endpoint
@@ -128,16 +141,17 @@ Dataset (standalone publication)
 
 **Key Concepts:**
 - **Dataset**: A standalone data publication with a unique DOI and PANGAEA ID (e.g., `830587`)
-- **Parameter** (or Column): A measured variable (e.g., "δ18O", "Age")
-- **Event**: A data point with geographic/temporal metadata
-- **Citation**: Every dataset has a formal reference that aligns with publication standards
+- **Collection**: A collection of Datasets with a unique ID. 
+- **Parameter** (or Column): A variable  (e.g., "δ18O", "Age") which closely alligns to cvWhats in NOAA, and generally variableName in TUPS.
+- **Event**: For paleoclimate studies, events most closely match to the concept of Sites in NOAA. Contains geographic/temporal metadata.
+- **Citation**: Every dataset has a formal data reference that aligns with publication standards. This is different from the publication citation that references the dataset.
 
 ```NOTE:
-Unlike NOAA, one Pangaea Dataset contains only one Data Table i.e. 1 csv/tsv type file.   
+Unlike NOAA, one Pangaea Dataset contains only one Data Table i.e. 1 csv/tsv type file. However, one Pangaea Dataset can still contain multiple events.
 ```
 ### PANGAEA Query Interface
 
-PANGAEA uses a **faceted search model** with advanced query syntax:
+PANGAEA uses a **filter-based search model** with advanced query syntax:
 
 ```
 Base URL: https://www.pangaea.de/advanced/search.php
@@ -160,6 +174,8 @@ Query parameters and operators [\[View complete list here\]](https://wiki.pangae
 - `OR`: Either condition can be met
 - `NOT`: Exclude results matching the term
 - Parentheses `()`: Group terms for precedence
+
+PyleoTUPS contructs this Pangaea query.
 
 ### How PyleoTUPS Uses PANGAEA
 
