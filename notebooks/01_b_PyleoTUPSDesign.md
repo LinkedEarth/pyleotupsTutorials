@@ -404,6 +404,7 @@ The unified interface means:
 
 ## Next Sections:
 
+- Setting up credentials for [Pangaea](01_c_PangaeaCredentialSetup.md).  
 - [Working with PyeloTUPS](02_a_NOAAObject.ipynb) (Tutorials using the NOAA & Pangaea Dataset objects)
 
 ## References:
