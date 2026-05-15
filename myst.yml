@@ -16,7 +16,6 @@ project:
         - file: notebooks/01_a_DataProvider.md
         - file: notebooks/01_b_PyeloTUPSDesign.md
         - file: notebooks/01_c_PangaeaCredentialSetup.md
-
     - file: README.md
     - title: Working with PyleoTUPS
       children:
@@ -28,6 +27,7 @@ project:
       children:
         - file: notebooks/03_a_noaa_to_lipd.ipynb
         - file: notebooks/03_b_pangaea_to_lipd.ipynb
+        - file: notebooks/03_c_AustralianLake.ipynb
     
 site:
   template: book-theme
