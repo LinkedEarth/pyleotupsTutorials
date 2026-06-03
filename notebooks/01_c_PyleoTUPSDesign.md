@@ -2,18 +2,18 @@
 
 ## Overview
 
-PyleoTUPS presents a **unified Python interface** to two fundamentally different paleoclimate data repositories: **NOAA NCEI Paleoclimate** and **PANGAEA**. Although these repositories organize data differently, use different search interfaces, and provide data in different formats, PyleoTUPS lets you work with both using the **same Python methods and parameters**.
+PyleoTUPS presents a **unified Python interface** to two fundamentally different paleoclimate data repositories: [**NOAA NCEI Paleoclimate**](https://www.ncei.noaa.gov/products/paleoclimatology) and [**PANGAEA**](https://www.pangaea.de). Although these repositories organize data differently, use different search interfaces, and provide data in different formats, PyleoTUPS lets you work with both using the **same Python methods and parameters**.
 
 This document explains what PyleoTUPS does for you and how to use it, regardless of which repository you're accessing.
 
-For detailed information about NOAA and PANGAEA themselves, see `DataProviders.md`.
+For detailed information about NOAA NCEI for Paleoclimatology and PANGAEA themselves, see `01_b_DataProviders.md`.
 
 ---
 
 ## Why a Unified Interface?
 
 ### The Problem
-- **NOAA** has a hierarchical structure with rich metadata but complex legacy file formats
+- **NOAA NCEI for Paleoclimatology** has a hierarchical structure with rich metadata but complex legacy file formats
 - **PANGAEA** has clean standardized tables but a simpler, flatter organization
 - **Researchers** want to access both but don't want to learn two completely different APIs
 
@@ -25,7 +25,7 @@ PyleoTUPS wraps both backends with a single Python API:
 - Automatic handling of provider differences (you don't need to worry about them)
 
 ### What This Means for You
-Write your Python code in one style. It works with NOAA, PANGAEA, or both.
+Write your Python code in one style. It works with NOAA NCEI for Paleoclimatology, PANGAEA, or both.
 
 ---
 
@@ -404,7 +404,7 @@ The unified interface means:
 
 ## Next Sections:
 
-- Setting up credentials for [Pangaea](01_c_PangaeaCredentialSetup.md).  
+- Setting up credentials for [Pangaea](01_d_PangaeaCredentialSetup.md).  
 - [Working with PyeloTUPS](02_a_NOAAObject.ipynb) (Tutorials using the NOAA & Pangaea Dataset objects)
 
 ## References:

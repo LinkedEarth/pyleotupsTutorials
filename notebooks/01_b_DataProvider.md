@@ -1,8 +1,8 @@
-# Understanding Data Providers: NOAA & PANGAEA
+# Paleoclimate Data Repositories: NOAA NCEI for Paleoclimatology & PANGAEA
 
 ## Overview
 
-PyleoTUPS integrates with two major paleoclimate data repositories to provide researchers with unified access to paleoclimate datasets. Understanding how these repositories work is essential for effectively using PyleoTUPS.
+PyleoTUPS integrates with two major paleoclimate data repositories, [NOAA NCEI for Paleoclimatology](https://www.ncei.noaa.gov/products/paleoclimatology) and [PANGAEA](https://www.pangaea.de) to provide researchers with unified access to paleoclimate datasets. Understanding how these repositories work is essential for effectively using PyleoTUPS.
 
 ### Data Provider:
 
@@ -12,20 +12,20 @@ In PyleoTUPS, a "Data Provider" is a paleoclimate repository that:
 - Stores metadata (location, authors, time periods, variables measured)
 
 PyleoTUPS works with:
-a. NOAA
-b. Pangaea
+a. [NOAA NCEI for Paleoclimatology](https://www.ncei.noaa.gov/products/paleoclimatology)
+b. [PANGAEA](https://www.pangaea.de)
 
 PyleoTUPS acts as a bridge between you and these repositories, handling API calls, data parsing, and format conversion so you don't have to.
 
 ---
 
-## NOAA NCEI Paleoclimate Database
+## NOAA NCEI for Paleoclimatology
 
-### What is NOAA?
+### What is NOAA NCEI for Paleoclimatology?
 
 The **National Oceanic and Atmospheric Administration (NOAA)** maintains the **NCEI Paleoclimate Global Monitoring Program**, one of the world's largest collections of paleoclimate data. 
 
-### Understanding the NOAA Data Structure
+### Understanding the NOAA NCEI for Paleoclimatology Data Structure
 
 ```
 Study (or "Individual Dataset")
@@ -53,13 +53,13 @@ NOAA datasets are organized hierarchically:
 In NOAA, data is organized in a hierarchical, one-to-many structure:
 
 - A Study (a publication or dataset) can contain multiple Sites
-- Each Site can contain multiple Paleo Data records
-- Each Paleo Data entry can include multiple Data Files (e.g., CSV, TXT)
-- Each Data File may correspond to one or more Data Tables [Generally, NOAA Template files have one table, however, old files contain multiple tables] 
+- Each Site can contain multiple PaleoData records
+- Each PaleoData entry can include multiple Data Files (e.g., CSV, TXT)
+- Each DataFile may correspond to one or more Data Tables. Generally, NOAA Template files have one table, however, old files contain multiple tables. In the past few years, NOAA has thrived to update its database to the new template, with one table per file.  
 
 ### NOAA API Endpoints
 
-PyleoTUPS uses the **NOAA NCEI Paleo Study Search API**:
+PyleoTUPS uses the [**NOAA NCEI Paleo Study Search API** endpoint](https://www.ncei.noaa.gov/access/paleo-search/api/):
 
 ```
 Base URL: https://www.ncei.noaa.gov/access/paleo-search/api/study/search.json
@@ -79,7 +79,7 @@ The API accepts a rich set of query parameters [\[View complete list here\]](htt
 | **Elevation** | `min_elevation`, `max_elevation` | `min_elevation=0, max_elevation=3000` |
 | **Pagination** | `limit`, `skip` | `limit=50, skip=100` |
 
-### How PyleoTUPS Uses NOAA
+### How PyleoTUPS Uses NOAA NCEI for Paleoclimatology
 
 When you call `NOAADataset.search_studies( <params> )`:
 
@@ -91,7 +91,7 @@ When you call `NOAADataset.search_studies( <params> )`:
 
 Each study returned includes file URLs pointing to text/CSV/Excel files hosted on NOAA servers.
 
-### Example NOAA Workflow
+### Example worklfow
 
 ```python
 import pyleotups as pt
@@ -117,7 +117,7 @@ df_data = ds.get_data("some_datatable_id")
 
 ### What is PANGAEA?
 
-**PANGAEA** is a sophisticated scientific data repository operated by the **Center for Marine Environmental Sciences (MARUM)**. It hosts interdisciplinary datasets, with a growing collection of paleoclimate studies.
+[**PANGAEA**](https://www.pangaea.de) is a sophisticated scientific data repository operated by the **Center for Marine Environmental Sciences (MARUM)**. It hosts interdisciplinary datasets, with a growing collection of paleoclimate studies.
 
 ### PANGAEA Data Organization
 
@@ -175,7 +175,7 @@ Query parameters and operators [\[View complete list here\]](https://wiki.pangae
 - `NOT`: Exclude results matching the term
 - Parentheses `()`: Group terms for precedence
 
-PyleoTUPS contructs this Pangaea query.
+PyleoTUPS constructs this Pangaea query automatically. Note PyleoTUPS still allow for a basic string search if you want to construct your own query. 
 
 ### How PyleoTUPS Uses PANGAEA
 
@@ -214,7 +214,7 @@ df_data = ds.get_data(830587)
 
 ---
 
-## Comparison: NOAA vs. PANGAEA
+## Comparison: NOAA NCEI for Paleoclimatology vs. PANGAEA
 
 ### Data Model
 
@@ -260,7 +260,7 @@ df_data = ds.get_data(830587)
 
 ## Summary
 
-PyleoTUPS bridges NOAA and PANGAEA by:
+PyleoTUPS bridges NOAA NCEI for paleoclimatology and PANGAEA by:
 
 1. **Normalizing search parameters** into repository-specific query formats
 2. **Abstracting repository differences** so users think in terms of paleoclimate concepts, not backend APIs
