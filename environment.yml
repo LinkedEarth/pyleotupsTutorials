@@ -9,12 +9,7 @@ dependencies:
       - pytest
       - pandas
       - requests
-      - pybtex
       - tqdm
-      - numpy
-      - pandas
-      - bibtextparser
-      - doi2bib
       - git+https://github.com/LinkedEarth/pyleotups.git@main
       - git+https://github.com/LinkedEarth/pylipd.git@main
-      - git+https://github.com/LinkedEarth/pyleoclim_utils.git@master
+      - pyleoclim
