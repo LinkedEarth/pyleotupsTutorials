@@ -3,6 +3,7 @@
 [![license](https://img.shields.io/github/license/linkedearth/pyleotupsTutorials.svg)]()
 [![DOI](https://zenodo.org/badge/869071109.svg)](https://doi.org/10.5281/zenodo.16923278)
 [![NSF-2411267](https://img.shields.io/badge/NSF-2411267-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2411267)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/LinkedEarth/pyleotupsTutorials/HEAD)
 
 
 # Pyleotups Tutorials
