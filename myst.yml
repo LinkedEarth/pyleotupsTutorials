@@ -20,7 +20,7 @@ project:
       children:
         - file: notebooks/01_a_DataSet.md
         - file: notebooks/01_b_DataProvider.md
-        - file: notebooks/01_c_PyeloTUPSDesign.md
+        - file: notebooks/01_c_PyleoTUPSDesign.md
         - file: notebooks/01_d_PangaeaCredentialSetup.md
     - title: Working with PyleoTUPS
       children:
